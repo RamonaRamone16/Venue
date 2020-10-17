@@ -29,7 +29,7 @@
 }
 
 
-@if (SignInManager.IsSignedIn(User) && (Model.Count == 0 || Model.Select(x => x.User).Contains(currentUserEmail)))
+@if (SignInManager.IsSignedIn(User) && (Model.Count == 0 || !Model.Select(x => x.User).Contains(currentUserEmail)))
 {
     <div class="mt-5">
         <p style="font-size: 15px; font-weight: 700">Добавить комментарий</p>
