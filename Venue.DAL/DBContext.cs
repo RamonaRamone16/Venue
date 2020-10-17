@@ -10,6 +10,10 @@ namespace Venue.DAL
 {
     public class DBContext : IdentityDbContext<User>
     {
+        public DbSet<Place> Places { get; set; }
+        public DbSet<Photo> Photos { get; set; }
+        public DbSet<Comment> Comments { get; set; }
+
         public DBContext(DbContextOptions<DBContext> options) : base(options)
         {
         }
