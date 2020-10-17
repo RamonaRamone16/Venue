@@ -22,7 +22,7 @@ namespace Venue.DAL
         {
             base.OnModelCreating(builder);
 
-           // builder.ApplyConfigurationsFromAssembly(typeof(DBContext).Assembly);
+            builder.ApplyConfigurationsFromAssembly(typeof(DBContext).Assembly);
         }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

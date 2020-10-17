@@ -15,4 +15,9 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.1.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Venue.DAL\Venue.DAL.csproj" />
+    <ProjectReference Include="..\Venue.Models\Venue.Models.csproj" />
+  </ItemGroup>
+
 </Project>
