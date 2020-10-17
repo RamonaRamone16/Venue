@@ -13,6 +13,7 @@ namespace Venue.DAL
         public DbSet<Place> Places { get; set; }
         public DbSet<Photo> Photos { get; set; }
         public DbSet<Comment> Comments { get; set; }
+        public DbSet<Rating> Ratings { get; set; }
 
         public DBContext(DbContextOptions<DBContext> options) : base(options)
         {

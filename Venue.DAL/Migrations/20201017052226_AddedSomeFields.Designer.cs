@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Venue.DAL;
 
 namespace Venue.DAL.Migrations
 {
     [DbContext(typeof(DBContext))]
-    partial class DBContextModelSnapshot : ModelSnapshot
+    [Migration("20201017052226_AddedSomeFields")]
+    partial class AddedSomeFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -241,37 +243,6 @@ namespace Venue.DAL.Migrations
                     b.ToTable("Places");
                 });
 
-            modelBuilder.Entity("Venue.DAL.Entities.Rating", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("CreatedUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Number")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PlaceId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PlaceId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Ratings");
-                });
-
             modelBuilder.Entity("Venue.DAL.Entities.User", b =>
                 {
                     b.Property<string>("Id")
@@ -409,26 +380,15 @@ namespace Venue.DAL.Migrations
 
                     b.HasOne("Venue.DAL.Entities.Place", "Venue")
                         .WithMany("Photos")
-                        .HasForeignKey("VenueId");
+                        .HasForeignKey("VenueId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Venue.DAL.Entities.Place", b =>
                 {
                     b.HasOne("Venue.DAL.Entities.User", "User")
                         .WithMany("Venues")
-                        .HasForeignKey("UserId");
-                });
-
-            modelBuilder.Entity("Venue.DAL.Entities.Rating", b =>
-                {
-                    b.HasOne("Venue.DAL.Entities.Place", "Place")
-                        .WithMany("Ratings")
-                        .HasForeignKey("PlaceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Venue.DAL.Entities.User", "User")
-                        .WithMany("Ratings")
                         .HasForeignKey("UserId");
                 });
 #pragma warning restore 612, 618

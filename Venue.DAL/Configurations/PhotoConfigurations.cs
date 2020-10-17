@@ -10,11 +10,13 @@ namespace Venue.DAL.Configurations
         {
             builder.HasOne(x => x.User)
                 .WithMany(y => y.Photos)
-                .HasForeignKey(x => x.UserId);
+                .HasForeignKey(x => x.UserId)
+                .IsRequired(false);
 
             builder.HasOne(x => x.Venue)
                 .WithMany(y => y.Photos)
-                .HasForeignKey(x => x.VenueId);
+                .HasForeignKey(x => x.VenueId)
+                .IsRequired(false);
         }
     }
 }

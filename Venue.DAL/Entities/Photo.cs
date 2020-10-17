@@ -2,7 +2,7 @@
 {
     public class Photo : BaseEntity<int>
     {
-        public string Name { get; set; }
+        public byte[] Picture { get; set; }
         public string UserId { get; set; }
         public int VenueId { get; set; }
 
