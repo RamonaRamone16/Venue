@@ -1,0 +1,97 @@
+﻿@model Venue.Models.Models.Place.PlaceIndexModel
+@using Microsoft.AspNetCore.Identity
+@using Venue.DAL.Entities
+@inject SignInManager<User> SignInManager
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div id="_place">
+</div>
+
+<div id="_imageForm">
+</div>
+
+<strong>Rating</strong>
+@for (int i = 1; i <= 5; i++)
+{
+     <a href="#" onclick="rating(@i)">
+         <img src="https://img.icons8.com/doodle/24/000000/star--v1.png" />
+     </a>
+}
+
+<div class="mt-5 mb-5" id="_allComments">
+</div>
+
+
+@section Scripts{
+    <script>
+        const getAllComments = () => {
+            $('#_allComments').load('@Url.Action("GetAll", "Comment")?placeId=' + @Model.Id);
+        };
+
+        const createNewComment = () => {
+            const text = $('#newComment').val();
+            const placeId = @Model.Id;
+
+            $.ajax({
+                url: '@Url.Action("Create", "Comment")',
+                type: "POST",
+                data: {
+                    text,
+                    placeId
+                },
+                success: function(data) {
+                    console.log(data);
+                    getAllComments();
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        const rating = (number) => {
+            const placeId = @Model.Id;
+            $.ajax({
+                url: '@Url.Action("AddRating", "Place")',
+                type: "POST",
+                data: {
+                    placeId,
+                    number
+                },
+                success: function(data) {
+                    console.log(data);
+                    getPlace();
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        const getPlace = () => {
+            $.get('@Url.Action("GetPlace", "Place")?placeId=' + @Model.Id)
+            .then(response => {
+                $('#_place').html(response);
+            });
+        }
+
+        const imageForm = () => {
+            $.get('@Url.Action("Create", "Image")?placeId=' + @Model.Id)
+            .then(response => {
+                $('#_imageForm').html(response);
+            });
+        }
+
+        $(function() {
+            getAllComments();
+            getPlace();
+            imageForm();
+        });
+
+    </script>
+}

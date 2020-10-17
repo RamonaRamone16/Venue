@@ -1,0 +1,27 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Venue.DAL.Entities
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+@model List<Venue.Models.Models.Comment.CommentIndexModel>
+
+@foreach (var item in Model)
+{
+    <div class="text-center mt-3 mb-3">
+        <div class="d-flex justify-content-between">
+            <p style="font-size: 15px" class="d-inline">@item.User</p>
+            <p style="font-size: 15px" class="d-inline">@item.CreatedUtc.ToString("dd.MM.yyyy")</p>
+        </div>
+        <p> @item.Text</p>
+    </div>
+    <hr />
+}
+
+
+@if (SignInManager.IsSignedIn(User) && Model.Select(x => x.User).Contains(UserManager.GetUserAsync(User).GetAwaiter().GetResult().Email))
+{
+    <div class="mt-5">
+        <p style="font-size: 15px; font-weight: 700">Добавить комментарий</p>
+        <textarea id="newComment" class="form-control"></textarea>
+        <button onclick="createNewComment()" type="submit" class="btn btn-info" style="margin-top: 50px">Ответить</button>
+    </div>
+}
