@@ -16,7 +16,7 @@ namespace Venue.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            return RedirectToAction("GetAll", "Place");
         }
 
         public IActionResult Privacy()

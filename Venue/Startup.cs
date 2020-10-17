@@ -7,6 +7,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Venue.DAL.Entities;
 using Venue.DAL;
+using Venue.BL.Mapper;
+using AutoMapper;
+using Venue.BL.Services;
+using Venue.DAL.Seeds;
 
 namespace Venue
 {
@@ -32,12 +36,16 @@ namespace Venue
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<DBContext>();
 
+            services.AddScoped<PlaceService>();
+            services.AddScoped<CommentService>();
+
+            services.AddAutoMapper(typeof(MappingConfiguration));
             services.AddControllersWithViews();
             services.AddRazorPages();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, UserManager<User> userManager)
         {
             if (env.IsDevelopment())
             {
@@ -65,6 +73,8 @@ namespace Venue
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
             });
+
+            DBInitializer.SeedUsers(userManager).Wait();
         }
     }
 }
