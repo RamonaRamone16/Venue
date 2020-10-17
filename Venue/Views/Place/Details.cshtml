@@ -2,9 +2,13 @@
 @using Microsoft.AspNetCore.Identity
 @using Venue.DAL.Entities
 @inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
 
 @{
     ViewData["Title"] = "Details";
+    var currentUserEmail = UserManager.GetUserAsync(User)
+         .GetAwaiter().GetResult()
+         .Email;
 }
 
 <h1>Details</h1>
@@ -12,15 +16,18 @@
 <div id="_place">
 </div>
 
-<div id="_imageForm">
-</div>
+@if (SignInManager.IsSignedIn(User) && Model.User == currentUserEmail)
+{
+    <div id="_imageForm">
+    </div>
+}
 
 <strong>Rating</strong>
 @for (int i = 1; i <= 5; i++)
 {
-     <a href="#" onclick="rating(@i)">
-         <img src="https://img.icons8.com/doodle/24/000000/star--v1.png" />
-     </a>
+    <a href="#" onclick="rating(@i)">
+        <img src="https://img.icons8.com/doodle/24/000000/star--v1.png" />
+    </a>
 }
 
 <div class="mt-5 mb-5" id="_allComments">
@@ -42,7 +49,8 @@
                 type: "POST",
                 data: {
                     text,
-                    placeId
+                    placeId,
+                    number
                 },
                 success: function(data) {
                     console.log(data);
@@ -86,6 +94,23 @@
                 $('#_imageForm').html(response);
             });
         }
+
+        const deleteComment = (id) => {
+           $.ajax({
+                url: '@Url.Action("Delete", "Comment")',
+                type: "POST",
+                data: {
+                    id
+                },
+                success: function() {
+                    getAllComments();
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        }
+
 
         $(function() {
             getAllComments();

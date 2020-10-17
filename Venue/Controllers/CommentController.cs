@@ -32,5 +32,12 @@ namespace Venue.Controllers
             await _service.Create(model, user.Id);
             return NoContent();
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
+        {
+            await _service.Delete(id);
+            return NoContent();
+        }
     }
 }

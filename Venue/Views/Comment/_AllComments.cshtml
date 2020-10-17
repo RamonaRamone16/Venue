@@ -4,12 +4,24 @@
 @inject UserManager<User> UserManager
 @model List<Venue.Models.Models.Comment.CommentIndexModel>
 
+@{
+    var currentUserEmail = UserManager.GetUserAsync(User)
+        .GetAwaiter().GetResult()
+        .Email;
+}
+
 @foreach (var item in Model)
 {
     <div class="text-center mt-3 mb-3">
         <div class="d-flex justify-content-between">
             <p style="font-size: 15px" class="d-inline">@item.User</p>
             <p style="font-size: 15px" class="d-inline">@item.CreatedUtc.ToString("dd.MM.yyyy")</p>
+            @if (item.User == currentUserEmail)
+            {
+                <a onclick="deleteComment(@item.Id)" href="">
+                    <img src="https://img.icons8.com/dusk/20/000000/delete-forever.png" />
+                </a>
+            }
         </div>
         <p> @item.Text</p>
     </div>
@@ -17,11 +29,13 @@
 }
 
 
-@if (SignInManager.IsSignedIn(User) && Model.Select(x => x.User).Contains(UserManager.GetUserAsync(User).GetAwaiter().GetResult().Email))
+@if (SignInManager.IsSignedIn(User) && (Model.Count == 0 || Model.Select(x => x.User).Contains(currentUserEmail)))
 {
     <div class="mt-5">
         <p style="font-size: 15px; font-weight: 700">Добавить комментарий</p>
         <textarea id="newComment" class="form-control"></textarea>
         <button onclick="createNewComment()" type="submit" class="btn btn-info" style="margin-top: 50px">Ответить</button>
     </div>
+
+    
 }

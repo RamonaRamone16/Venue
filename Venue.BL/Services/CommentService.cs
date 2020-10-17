@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,7 +19,11 @@ namespace Venue.BL.Services
 
         public async Task<List<CommentIndexModel>> GetAll(int placeId)
         {
-            var models = await _context.Comments.Where(x => x.VenueId == placeId).Include(x => x.User).ToListAsync();
+            var models = await _context.Comments.Where(x => x.VenueId == placeId)
+                .Include(x => x.User)
+                .OrderByDescending(x => x.CreatedUtc)
+                .ToListAsync();
+
             return _mapper.Map<List<CommentIndexModel>>(models);
         }
 
@@ -28,6 +33,12 @@ namespace Venue.BL.Services
             entity.UserId = userId;
 
             await _context.AddAsync(entity);
+        }
+
+        public async Task Delete(int id)
+        {
+            var model = await _context.Comments.FirstOrDefaultAsync(x => x.Id == id);
+            await _context.RemoveAsync(model);
         }
     }
 }

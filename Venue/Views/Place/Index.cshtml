@@ -1,4 +1,5 @@
 ﻿@model Venue.Models.Models.SearchModel
+@using Venue.Models.Models
 
 @{
     ViewData["Title"] = "Index";
@@ -8,7 +9,7 @@
 
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="GatAll" asp-controller="Place" method="get">
+        <form asp-action="GetAll" method="get">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
@@ -22,21 +23,63 @@
     </div>
 </div>
 
-@foreach (var place in Model.Places)
+@for (int i = 0; i < Model.Paging.PageSize / 3; i++)
 {
-    <div class="card" style="width: 18rem;">
-        @if (place.Images != null && place.Images.Count > 0)
+    <div class="d-flex justify-content-between">
+        @for (int j = 0; j < 3; j++)
         {
-            <img class="card-img-top" src="data:image/jpeg;base64,@(Convert.ToBase64String(place.Images.First().Picture))">
+            <div class="card " style="width: 30%;">
+                @if (Model.Places[i+j].Images != null && Model.Places[i + j].Images.Count > 0)
+                {
+                    <img class="card-img-top" src="data:image/jpeg;base64,@(Convert.ToBase64String(Model.Places[i + j].Images.First().Picture))">
+                }
+                else
+                {
+                    <img class="card-img-top" src="~/images/no-image.png">
+                }
+                <div class="card-body">
+                    <h5 class="card-title">@Model.Places[i + j].Name</h5>
+                    <p class="card-text">@Model.Places[i + j].Description</p>
+                    <a class="btn btn-primary" asp-action="Details" asp-controller="Place" asp-route-id="@place.Id">Подробнее</a>
+                </div>
+            </div>
         }
-        else
-        {
-            <img class="card-img-top" src="~/images/no-image.png">
-        }
-        <div class="card-body">
-            <h5 class="card-title">@place.Name</h5>
-            <p class="card-text">@place.Description</p>
-            <a class="btn btn-primary" asp-action="Details" asp-controller="Place" asp-route-id="@place.Id">Подробнее</a>
-        </div>
     </div>
 }
+
+<div class="text-xl-center d-flex justify-content-center">
+    <div class="d-inline">
+        @if (Model.Paging.HavePreviousPage)
+            @Html.ActionLink("<< Назад", "GetAll", "Place",
+            new SearchModel
+            {
+                Name = Model.Name,
+                CurrentPage = Model.CurrentPage - 1
+            })
+    </div>
+
+
+    <div class="d-inline mr-3 ml-3">
+        @for (int i = 1; i <= Model.Paging.PagesCount; i++)
+        {
+            <b class="mr-2">
+                @Html.ActionLink($"{i}", "GetAll", "Place",
+                    new SearchModel
+                    {
+                        Name = Model.Name,
+                        CurrentPage = i
+                    })
+            </b>
+        }
+    </div>
+
+    <div class="d-inline">
+        @if (Model.Paging.HaveNextPage)
+            @Html.ActionLink("Вперед >>", "GetAll", "Place",
+                 new SearchModel
+                 {
+                     Name = Model.Name,
+                     CurrentPage = Model.CurrentPage + 1
+                 })
+    </div>
+</div>

@@ -80,3 +80,21 @@ body {
     width: 20%;
     height: 70px;
 }
+
+.Star {
+    background-image: url(images/Star.gif);
+    height: 17px;
+    width: 17px;
+}
+
+.WaitingStar {
+    background-image: url(images/WaitingStar.gif);
+    height: 17px;
+    width: 17px;
+}
+
+.FilledStar {
+    background-image: url(images/FilledStar.gif);
+    height: 17px;
+    width: 17px;
+}

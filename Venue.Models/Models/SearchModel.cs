@@ -7,5 +7,7 @@ namespace Venue.Models.Models
     {
         public string Name { get; set; }
         public List<PlaceIndexModel> Places { get; set; }
+        public PagingModel Paging { get; set; }
+        public int? CurrentPage { get; set; }
     }
 }

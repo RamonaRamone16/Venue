@@ -23,9 +23,20 @@ namespace Venue.BL.Services
         public SearchModel GetAll(SearchModel model)
         {
             var places = _context.Places.Include(x => x.Photos)
-                .GetByName(model.Name).ToList();
+                .Include(x => x.User)
+                .GetByName(model.Name).OrderByDescending(x => x.CreatedUtc).ToList();
 
             model.Places = _mapper.Map<List<PlaceIndexModel>>(places);
+
+            int currentPage = model.CurrentPage.HasValue ? model.CurrentPage.Value : 1;
+            int pagesCount = model.Places.Count;
+
+            PagingModel pagingModel = new PagingModel(pagesCount, currentPage);
+
+            model.Places = model.Places.Skip((currentPage - 1) * pagingModel.PageSize).Take(pagingModel.PageSize).ToList();
+
+            model.CurrentPage = currentPage;
+            model.Paging = pagingModel;
 
             return model;
         }
@@ -34,6 +45,7 @@ namespace Venue.BL.Services
         {
             var model = await _context.Places.Include(x => x.Photos)
                 .Include(x => x.Ratings)
+                .Include(x => x.User)
                 .FirstOrDefaultAsync(x => x.Id == id);
 
             return _mapper.Map<PlaceIndexModel>(model);
@@ -50,14 +62,22 @@ namespace Venue.BL.Services
 
         public async Task AddRating(int placeId, string userId, int number)
         {
-            var model = new Rating()
+            var entity = await _context.Ratings.FirstOrDefaultAsync(x => x.PlaceId == placeId && x.UserId == userId);
+            if (entity != null)
             {
-                PlaceId = placeId,
-                UserId = userId,
-                Number = number
-            };
-
-            await _context.AddAsync(model);
+                entity.Number = number;
+                await _context.UpdateAsync(entity);
+            }
+            else
+            {
+                var rating = new Rating()
+                {
+                    PlaceId = placeId,
+                    UserId = userId,
+                    Number = number
+                };
+                await _context.AddAsync(rating);
+            }
         }
 
         public async Task CreatePhotos(IFormFileCollection photos, int placeId)
